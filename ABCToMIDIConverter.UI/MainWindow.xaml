@@ -1,7 +1,8 @@
 ﻿<Window x:Class="ABCToMIDIConverter.UI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="ABC to MIDI Converter" Height="500" Width="700"
+        xmlns:local="clr-namespace:ABCToMIDIConverter.UI"
+        Title="ABC to MIDI Converter" Height="600" Width="800"
         WindowStartupLocation="CenterScreen">
     <Grid Margin="20">
         <Grid.RowDefinitions>
@@ -13,46 +14,66 @@
         </Grid.RowDefinitions>
 
         <!-- Title -->
-        <TextBlock Grid.Row="0" Text="ABC to MIDI Converter" 
+        <TextBlock Grid.Row="0" Text="🎵 ABC to MIDI Converter" 
                    FontSize="24" FontWeight="Bold" 
-                   HorizontalAlignment="Center" Margin="0,0,0,20"/>
+                   HorizontalAlignment="Center" Margin="0,0,0,20"
+                   Foreground="DarkBlue"/>
 
         <!-- ABC Input -->
-        <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="1" Padding="5">
+        <GroupBox Grid.Row="1" Header="📝 ABC Notation Input" Padding="5">
             <ScrollViewer>
                 <TextBox Name="AbcTextBox" 
                          TextWrapping="Wrap" 
                          AcceptsReturn="True"
                          FontFamily="Consolas"
-                         Text="X:1&#x0A;T:Test Tune&#x0A;C:Anonymous&#x0A;M:4/4&#x0A;L:1/4&#x0A;K:C&#x0A;"/>
+                         FontSize="12"
+                         Text="{Binding AbcText, UpdateSourceTrigger=PropertyChanged}"
+                         VerticalScrollBarVisibility="Auto"/>
             </ScrollViewer>
-        </Border>
+        </GroupBox>
 
         <!-- Buttons -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" 
-                    HorizontalAlignment="Center" Margin="0,10">
-            <Button Name="ParseButton" Content="Parse ABC" 
-                    Padding="10,5" Margin="0,0,10,0" Click="ParseButton_Click"/>
-            <Button Name="ConvertButton" Content="Convert to MIDI" 
-                    Padding="10,5" Margin="0,0,10,0" Click="ConvertButton_Click"/>
-            <Button Name="ClearButton" Content="Clear" 
-                    Padding="10,5" Click="ClearButton_Click"/>
+                    HorizontalAlignment="Center" Margin="0,15">
+            <Button Content="🎼 Parse ABC" 
+                    Padding="15,8" Margin="0,0,10,0" 
+                    Command="{Binding ParseCommand}"
+                    IsEnabled="{Binding IsConverting, Converter={x:Static local:Converters.BooleanNegationConverter}}"
+                    Background="LightBlue"/>
+            <Button Content="🎹 Convert to MIDI" 
+                    Padding="15,8" Margin="0,0,10,0" 
+                    Command="{Binding ConvertCommand}"
+                    Background="LightGreen"/>
+            <Button Content="🗑️ Clear" 
+                    Padding="15,8" Margin="0,0,10,0"
+                    Command="{Binding ClearCommand}"
+                    Background="LightCoral"/>
+            <Button Content="📄 Load Sample" 
+                    Padding="15,8"
+                    Command="{Binding LoadSampleCommand}"
+                    Background="LightYellow"/>
         </StackPanel>
 
         <!-- Status -->
-        <TextBlock Grid.Row="3" Name="StatusTextBlock" 
-                   Text="Ready" Margin="0,10,0,5"
-                   FontWeight="Bold"/>
+        <TextBlock Grid.Row="3" 
+                   Text="{Binding StatusText}" 
+                   Margin="0,10,0,5"
+                   FontWeight="Bold"
+                   FontSize="14"
+                   Foreground="DarkGreen"/>
 
         <!-- Output -->
-        <Border Grid.Row="4" BorderBrush="Gray" BorderThickness="1" Padding="5">
+        <GroupBox Grid.Row="4" Header="📋 Output Messages" Padding="5">
             <ScrollViewer>
                 <TextBox Name="OutputTextBox" 
                          IsReadOnly="True"
                          TextWrapping="Wrap"
                          FontFamily="Consolas"
-                         Background="LightGray"/>
+                         FontSize="11"
+                         Text="{Binding OutputMessages}"
+                         Background="#F5F5F5"
+                         VerticalScrollBarVisibility="Auto"/>
             </ScrollViewer>
-        </Border>
+        </GroupBox>
     </Grid>
 </Window>

@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents a musical note in ABC notation
     /// </summary>
-    public class Note
+    public class Note : MusicalElement
     {
         /// <summary>
         /// The pitch letter (A, B, C, D, E, F, G)

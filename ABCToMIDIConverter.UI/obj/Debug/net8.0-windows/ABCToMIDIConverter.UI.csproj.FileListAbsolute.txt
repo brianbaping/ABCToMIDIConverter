@@ -36,3 +36,4 @@ D:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.UI\obj\Debug\net8.0-w
 D:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.UI\obj\Debug\net8.0-windows\ABCToMIDIConverter.UI.genruntimeconfig.cache
 D:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.UI\obj\Debug\net8.0-windows\ref\ABCToMIDIConverter.UI.dll
 D:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.UI\obj\Debug\net8.0-windows\ABCToMIDIConverter.UI.sourcelink.json
+D:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.UI\obj\Debug\net8.0-windows\ABCToMIDIConverter.UI_MarkupCompile.lref

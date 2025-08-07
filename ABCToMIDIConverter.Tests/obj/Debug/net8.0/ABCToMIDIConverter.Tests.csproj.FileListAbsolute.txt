@@ -109,3 +109,4 @@ D:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.Tests\obj\Debug\net8.
 D:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.Tests\obj\Debug\net8.0\ABCToMIDIConverter.Tests.pdb
 D:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.Tests\obj\Debug\net8.0\ABCToMIDIConverter.Tests.genruntimeconfig.cache
 D:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.Tests\obj\Debug\net8.0\ref\ABCToMIDIConverter.Tests.dll
+D:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.Tests\obj\Debug\net8.0\ABCToMIDIConverter.Tests.sourcelink.json

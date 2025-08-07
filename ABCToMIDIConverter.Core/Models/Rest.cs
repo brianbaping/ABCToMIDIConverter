@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents a rest in ABC notation
     /// </summary>
-    public class Rest
+    public class Rest : MusicalElement
     {
         /// <summary>
         /// The duration of the rest
