@@ -1,0 +1,275 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Text.RegularExpressions;
+
+namespace ABCToMIDIConverter.Core.Parsers
+{
+    /// <summary>
+    /// Tokenizes ABC notation text into tokens
+    /// </summary>
+    public class AbcTokenizer
+    {
+        private string _text = string.Empty;
+        private int _position;
+        private int _line;
+        private int _column;
+
+        public List<Token> Tokenize(string text)
+        {
+            _text = text ?? throw new ArgumentNullException(nameof(text));
+            _position = 0;
+            _line = 1;
+            _column = 1;
+
+            var tokens = new List<Token>();
+
+            while (_position < _text.Length)
+            {
+                var token = GetNextToken();
+                if (token != null)
+                {
+                    tokens.Add(token);
+                }
+            }
+
+            tokens.Add(new Token(TokenType.EndOfFile, "", _position, _line, _column));
+            return tokens;
+        }
+
+        private Token? GetNextToken()
+        {
+            if (_position >= _text.Length)
+                return null;
+
+            char current = _text[_position];
+
+            // Skip whitespace (except newlines)
+            if (char.IsWhiteSpace(current) && current != '\n' && current != '\r')
+            {
+                SkipWhitespace();
+                return null;
+            }
+
+            // Handle newlines
+            if (current == '\n' || current == '\r')
+            {
+                return HandleNewLine();
+            }
+
+            // Handle comments
+            if (current == '%')
+            {
+                return HandleComment();
+            }
+
+            // Handle information fields (letter followed by colon)
+            if (char.IsLetter(current) && _position + 1 < _text.Length && _text[_position + 1] == ':')
+            {
+                return HandleInformationField();
+            }
+
+            // Handle accidentals
+            if (current == '^' || current == '_' || current == '=')
+            {
+                return HandleAccidental();
+            }
+
+            // Handle notes (A-G, a-g)
+            if (char.IsLetter(current) && IsNoteCharacter(current))
+            {
+                return HandleNote();
+            }
+
+            // Handle rests
+            if (current == 'z' || current == 'x' || current == 'Z')
+            {
+                return HandleRest();
+            }
+
+            // Handle bar lines
+            if (current == '|' || current == ':')
+            {
+                return HandleBarLine();
+            }
+
+            // Handle chord brackets
+            if (current == '[')
+            {
+                return CreateToken(TokenType.ChordStart, "[");
+            }
+
+            if (current == ']')
+            {
+                return CreateToken(TokenType.ChordEnd, "]");
+            }
+
+            // Handle numbers (durations)
+            if (char.IsDigit(current) || current == '/')
+            {
+                return HandleDuration();
+            }
+
+            // Unknown character
+            return CreateToken(TokenType.Unknown, current.ToString());
+        }
+
+        private void SkipWhitespace()
+        {
+            while (_position < _text.Length &&
+                   char.IsWhiteSpace(_text[_position]) &&
+                   _text[_position] != '\n' &&
+                   _text[_position] != '\r')
+            {
+                _position++;
+                _column++;
+            }
+        }
+
+        private Token HandleNewLine()
+        {
+            var start = _position;
+            if (_text[_position] == '\r' && _position + 1 < _text.Length && _text[_position + 1] == '\n')
+            {
+                _position += 2; // \r\n
+            }
+            else
+            {
+                _position++; // \n or \r
+            }
+
+            var token = new Token(TokenType.NewLine, _text.Substring(start, _position - start), start, _line, _column);
+            _line++;
+            _column = 1;
+            return token;
+        }
+
+        private Token HandleComment()
+        {
+            var start = _position;
+            var startColumn = _column;
+
+            // Skip until end of line
+            while (_position < _text.Length && _text[_position] != '\n' && _text[_position] != '\r')
+            {
+                _position++;
+                _column++;
+            }
+
+            return new Token(TokenType.Comment, _text.Substring(start, _position - start), start, _line, startColumn);
+        }
+
+        private Token HandleInformationField()
+        {
+            var start = _position;
+            var startColumn = _column;
+
+            // Read field identifier (letter + colon)
+            _position++;
+            _column++;
+            _position++; // skip colon
+            _column++;
+
+            // Read until end of line
+            while (_position < _text.Length && _text[_position] != '\n' && _text[_position] != '\r')
+            {
+                _position++;
+                _column++;
+            }
+
+            return new Token(TokenType.InformationField, _text.Substring(start, _position - start), start, _line, startColumn);
+        }
+
+        private Token HandleAccidental()
+        {
+            var start = _position;
+            var startColumn = _column;
+            char current = _text[_position];
+
+            _position++;
+            _column++;
+
+            // Check for double accidentals (^^, __, ==)
+            if (_position < _text.Length && _text[_position] == current)
+            {
+                _position++;
+                _column++;
+            }
+
+            return new Token(TokenType.Accidental, _text.Substring(start, _position - start), start, _line, startColumn);
+        }
+
+        private Token HandleNote()
+        {
+            var start = _position;
+            var startColumn = _column;
+
+            // Read the note letter
+            _position++;
+            _column++;
+
+            // Check for octave indicators (commas and apostrophes)
+            while (_position < _text.Length && (_text[_position] == ',' || _text[_position] == '\''))
+            {
+                _position++;
+                _column++;
+            }
+
+            return new Token(TokenType.Note, _text.Substring(start, _position - start), start, _line, startColumn);
+        }
+
+        private Token HandleRest()
+        {
+            var start = _position;
+            var startColumn = _column;
+
+            _position++;
+            _column++;
+
+            return new Token(TokenType.Rest, _text.Substring(start, _position - start), start, _line, startColumn);
+        }
+
+        private Token HandleBarLine()
+        {
+            var start = _position;
+            var startColumn = _column;
+
+            // Handle different bar line combinations: |, ||, |:, :|, ::, etc.
+            while (_position < _text.Length && (_text[_position] == '|' || _text[_position] == ':'))
+            {
+                _position++;
+                _column++;
+            }
+
+            return new Token(TokenType.BarLine, _text.Substring(start, _position - start), start, _line, startColumn);
+        }
+
+        private Token HandleDuration()
+        {
+            var start = _position;
+            var startColumn = _column;
+
+            // Handle patterns like: 2, 1/2, 3/4, /2, //
+            while (_position < _text.Length && (char.IsDigit(_text[_position]) || _text[_position] == '/'))
+            {
+                _position++;
+                _column++;
+            }
+
+            return new Token(TokenType.Duration, _text.Substring(start, _position - start), start, _line, startColumn);
+        }
+
+        private bool IsNoteCharacter(char c)
+        {
+            return (c >= 'A' && c <= 'G') || (c >= 'a' && c <= 'g');
+        }
+
+        private Token CreateToken(TokenType type, string value)
+        {
+            var token = new Token(type, value, _position, _line, _column);
+            _position += value.Length;
+            _column += value.Length;
+            return token;
+        }
+    }
+}

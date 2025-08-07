@@ -1,0 +1,13 @@
+D:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.Core\bin\Debug\net8.0\ABCToMIDIConverter.Core.deps.json
+D:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.Core\bin\Debug\net8.0\ABCToMIDIConverter.Core.dll
+D:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.Core\bin\Debug\net8.0\ABCToMIDIConverter.Core.pdb
+D:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.Core\obj\Debug\net8.0\ABCToMIDIConverter.Core.csproj.AssemblyReference.cache
+D:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.Core\obj\Debug\net8.0\ABCToMIDIConverter.Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.Core\obj\Debug\net8.0\ABCToMIDIConverter.Core.AssemblyInfoInputs.cache
+D:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.Core\obj\Debug\net8.0\ABCToMIDIConverter.Core.AssemblyInfo.cs
+D:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.Core\obj\Debug\net8.0\ABCToMIDIConverter.Core.csproj.CoreCompileInputs.cache
+D:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.Core\obj\Debug\net8.0\ABCToMIDIConverter.Core.dll
+D:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.Core\obj\Debug\net8.0\refint\ABCToMIDIConverter.Core.dll
+D:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.Core\obj\Debug\net8.0\ABCToMIDIConverter.Core.pdb
+D:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.Core\obj\Debug\net8.0\ref\ABCToMIDIConverter.Core.dll
+D:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.Core\obj\Debug\net8.0\ABCToMIDIConverter.Core.sourcelink.json

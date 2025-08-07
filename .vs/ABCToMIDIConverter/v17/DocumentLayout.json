@@ -1,0 +1,342 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Brian\\Development\\ABCToMIDIConverter\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|d:\\brian\\development\\abctomidiconverter\\abctomidiconverter.core\\converters\\midiconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|solutionrelative:abctomidiconverter.core\\converters\\midiconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|d:\\brian\\development\\abctomidiconverter\\abctomidiconverter.core\\parsers\\abcparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|solutionrelative:abctomidiconverter.core\\parsers\\abcparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DA0C2189-581F-4A44-974F-B3B178C8EC15}|ABCToMIDIConverter.UI\\ABCToMIDIConverter.UI.csproj|d:\\brian\\development\\abctomidiconverter\\abctomidiconverter.ui\\mainwindow.xaml.cs||{8B382828-6202-11D1-8870-0000F87579D2}|",
+      "RelativeMoniker": "D:0:0:{DA0C2189-581F-4A44-974F-B3B178C8EC15}|ABCToMIDIConverter.UI\\ABCToMIDIConverter.UI.csproj|solutionrelative:abctomidiconverter.ui\\mainwindow.xaml.cs||{8B382828-6202-11D1-8870-0000F87579D2}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|d:\\brian\\development\\abctomidiconverter\\abctomidiconverter.core\\models\\timingcalculator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|solutionrelative:abctomidiconverter.core\\models\\timingcalculator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|d:\\brian\\development\\abctomidiconverter\\abctomidiconverter.core\\models\\midinote.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|solutionrelative:abctomidiconverter.core\\models\\midinote.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DA0C2189-581F-4A44-974F-B3B178C8EC15}|ABCToMIDIConverter.UI\\ABCToMIDIConverter.UI.csproj|d:\\brian\\development\\abctomidiconverter\\abctomidiconverter.ui\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{DA0C2189-581F-4A44-974F-B3B178C8EC15}|ABCToMIDIConverter.UI\\ABCToMIDIConverter.UI.csproj|solutionrelative:abctomidiconverter.ui\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{823850D2-8F17-4E03-8732-457D9C496A10}|ABCToMIDIConverter.Tests\\ABCToMIDIConverter.Tests.csproj|d:\\brian\\development\\abctomidiconverter\\abctomidiconverter.tests\\parsertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{823850D2-8F17-4E03-8732-457D9C496A10}|ABCToMIDIConverter.Tests\\ABCToMIDIConverter.Tests.csproj|solutionrelative:abctomidiconverter.tests\\parsertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|d:\\brian\\development\\abctomidiconverter\\abctomidiconverter.core\\parsers\\parseresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|solutionrelative:abctomidiconverter.core\\parsers\\parseresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|d:\\brian\\development\\abctomidiconverter\\abctomidiconverter.core\\parsers\\abctokenizer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|solutionrelative:abctomidiconverter.core\\parsers\\abctokenizer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|d:\\brian\\development\\abctomidiconverter\\abctomidiconverter.core\\parsers\\token.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|solutionrelative:abctomidiconverter.core\\parsers\\token.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|d:\\brian\\development\\abctomidiconverter\\abctomidiconverter.core\\models\\musicalelement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|solutionrelative:abctomidiconverter.core\\models\\musicalelement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|d:\\brian\\development\\abctomidiconverter\\abctomidiconverter.core\\models\\abctune.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|solutionrelative:abctomidiconverter.core\\models\\abctune.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|d:\\brian\\development\\abctomidiconverter\\abctomidiconverter.core\\models\\keysignature.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|solutionrelative:abctomidiconverter.core\\models\\keysignature.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|d:\\brian\\development\\abctomidiconverter\\abctomidiconverter.core\\models\\timesignature.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|solutionrelative:abctomidiconverter.core\\models\\timesignature.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|d:\\brian\\development\\abctomidiconverter\\abctomidiconverter.core\\models\\rest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|solutionrelative:abctomidiconverter.core\\models\\rest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|d:\\brian\\development\\abctomidiconverter\\abctomidiconverter.core\\models\\accidental.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|solutionrelative:abctomidiconverter.core\\models\\accidental.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|d:\\brian\\development\\abctomidiconverter\\abctomidiconverter.core\\models\\note.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|solutionrelative:abctomidiconverter.core\\models\\note.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DA0C2189-581F-4A44-974F-B3B178C8EC15}|ABCToMIDIConverter.UI\\ABCToMIDIConverter.UI.csproj|d:\\brian\\development\\abctomidiconverter\\abctomidiconverter.ui\\abctomidiconverter.ui.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{DA0C2189-581F-4A44-974F-B3B178C8EC15}|ABCToMIDIConverter.UI\\ABCToMIDIConverter.UI.csproj|solutionrelative:abctomidiconverter.ui\\abctomidiconverter.ui.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|d:\\brian\\development\\abctomidiconverter\\abctomidiconverter.core\\abctomidiconverter.core.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{B3E58D25-C579-4F1C-B17D-03EF2A0D0E1E}|ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj|solutionrelative:abctomidiconverter.core\\abctomidiconverter.core.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.UI\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "ABCToMIDIConverter.UI\\MainWindow.xaml.cs",
+              "ToolTip": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.UI\\MainWindow.xaml.cs",
+              "RelativeToolTip": "ABCToMIDIConverter.UI\\MainWindow.xaml.cs",
+              "ViewState": "AQIAAFkAAAAAAAAAAAAAwGIAAAAsAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-07T03:02:46.339Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.UI\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "ABCToMIDIConverter.UI\\MainWindow.xaml",
+              "ToolTip": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.UI\\MainWindow.xaml",
+              "RelativeToolTip": "ABCToMIDIConverter.UI\\MainWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-08-07T03:02:09.278Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MidiConverter.cs",
+              "DocumentMoniker": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Converters\\MidiConverter.cs",
+              "RelativeDocumentMoniker": "ABCToMIDIConverter.Core\\Converters\\MidiConverter.cs",
+              "ToolTip": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Converters\\MidiConverter.cs",
+              "RelativeToolTip": "ABCToMIDIConverter.Core\\Converters\\MidiConverter.cs",
+              "ViewState": "AQIAAAsAAAAAAAAAAAAUwJgAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-07T03:00:42.398Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "TimingCalculator.cs",
+              "DocumentMoniker": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Models\\TimingCalculator.cs",
+              "RelativeDocumentMoniker": "ABCToMIDIConverter.Core\\Models\\TimingCalculator.cs",
+              "ToolTip": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Models\\TimingCalculator.cs",
+              "RelativeToolTip": "ABCToMIDIConverter.Core\\Models\\TimingCalculator.cs",
+              "ViewState": "AQIAABcAAAAAAAAAAAAQwDUAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-07T03:00:12.574Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "MidiNote.cs",
+              "DocumentMoniker": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Models\\MidiNote.cs",
+              "RelativeDocumentMoniker": "ABCToMIDIConverter.Core\\Models\\MidiNote.cs",
+              "ToolTip": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Models\\MidiNote.cs",
+              "RelativeToolTip": "ABCToMIDIConverter.Core\\Models\\MidiNote.cs",
+              "ViewState": "AQIAAAcAAAAAAAAAAAAQwCUAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-07T02:59:45.788Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ParserTests.cs",
+              "DocumentMoniker": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Tests\\ParserTests.cs",
+              "RelativeDocumentMoniker": "ABCToMIDIConverter.Tests\\ParserTests.cs",
+              "ToolTip": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Tests\\ParserTests.cs",
+              "RelativeToolTip": "ABCToMIDIConverter.Tests\\ParserTests.cs",
+              "ViewState": "AQIAAA0AAAAAAAAAAAAgwDQAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-07T02:53:46.139Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AbcParser.cs",
+              "DocumentMoniker": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Parsers\\AbcParser.cs",
+              "RelativeDocumentMoniker": "ABCToMIDIConverter.Core\\Parsers\\AbcParser.cs",
+              "ToolTip": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Parsers\\AbcParser.cs",
+              "RelativeToolTip": "ABCToMIDIConverter.Core\\Parsers\\AbcParser.cs",
+              "ViewState": "AQIAAO8AAAAAAAAAAAAuwD4BAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-07T02:53:04.611Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "ParseResult.cs",
+              "DocumentMoniker": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Parsers\\ParseResult.cs",
+              "RelativeDocumentMoniker": "ABCToMIDIConverter.Core\\Parsers\\ParseResult.cs",
+              "ToolTip": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Parsers\\ParseResult.cs",
+              "RelativeToolTip": "ABCToMIDIConverter.Core\\Parsers\\ParseResult.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAB0AAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-07T02:52:48.05Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "AbcTokenizer.cs",
+              "DocumentMoniker": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Parsers\\AbcTokenizer.cs",
+              "RelativeDocumentMoniker": "ABCToMIDIConverter.Core\\Parsers\\AbcTokenizer.cs",
+              "ToolTip": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Parsers\\AbcTokenizer.cs",
+              "RelativeToolTip": "ABCToMIDIConverter.Core\\Parsers\\AbcTokenizer.cs",
+              "ViewState": "AQIAAO8AAAAAAAAAAAAYwBIBAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-07T02:52:19.318Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Token.cs",
+              "DocumentMoniker": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Parsers\\Token.cs",
+              "RelativeDocumentMoniker": "ABCToMIDIConverter.Core\\Parsers\\Token.cs",
+              "ToolTip": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Parsers\\Token.cs",
+              "RelativeToolTip": "ABCToMIDIConverter.Core\\Parsers\\Token.cs",
+              "ViewState": "AQIAACIAAAAAAAAAAAAswDgAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-07T02:51:54.389Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "MusicalElement.cs",
+              "DocumentMoniker": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Models\\MusicalElement.cs",
+              "RelativeDocumentMoniker": "ABCToMIDIConverter.Core\\Models\\MusicalElement.cs",
+              "ToolTip": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Models\\MusicalElement.cs",
+              "RelativeToolTip": "ABCToMIDIConverter.Core\\Models\\MusicalElement.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABEAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-07T02:49:10.402Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "AbcTune.cs",
+              "DocumentMoniker": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Models\\AbcTune.cs",
+              "RelativeDocumentMoniker": "ABCToMIDIConverter.Core\\Models\\AbcTune.cs",
+              "ToolTip": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Models\\AbcTune.cs",
+              "RelativeToolTip": "ABCToMIDIConverter.Core\\Models\\AbcTune.cs",
+              "ViewState": "AQIAABwAAAAAAAAAAAAYwD8AAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-07T02:48:32.276Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "KeySignature.cs",
+              "DocumentMoniker": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Models\\KeySignature.cs",
+              "RelativeDocumentMoniker": "ABCToMIDIConverter.Core\\Models\\KeySignature.cs",
+              "ToolTip": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Models\\KeySignature.cs",
+              "RelativeToolTip": "ABCToMIDIConverter.Core\\Models\\KeySignature.cs",
+              "ViewState": "AQIAAC0AAAAAAAAAAAAYwFAAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-07T02:48:11.919Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "TimeSignature.cs",
+              "DocumentMoniker": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Models\\TimeSignature.cs",
+              "RelativeDocumentMoniker": "ABCToMIDIConverter.Core\\Models\\TimeSignature.cs",
+              "ToolTip": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Models\\TimeSignature.cs",
+              "RelativeToolTip": "ABCToMIDIConverter.Core\\Models\\TimeSignature.cs",
+              "ViewState": "AQIAAB8AAAAAAAAAAAAYwEIAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-07T02:47:48.086Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Rest.cs",
+              "DocumentMoniker": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Models\\Rest.cs",
+              "RelativeDocumentMoniker": "ABCToMIDIConverter.Core\\Models\\Rest.cs",
+              "ToolTip": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Models\\Rest.cs",
+              "RelativeToolTip": "ABCToMIDIConverter.Core\\Models\\Rest.cs",
+              "ViewState": "AQIAAAsAAAAAAAAAAAAswCQAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-07T02:47:19.625Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "Accidental.cs",
+              "DocumentMoniker": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Models\\Accidental.cs",
+              "RelativeDocumentMoniker": "ABCToMIDIConverter.Core\\Models\\Accidental.cs",
+              "ToolTip": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Models\\Accidental.cs",
+              "RelativeToolTip": "ABCToMIDIConverter.Core\\Models\\Accidental.cs",
+              "ViewState": "AQIAAAsAAAAAAAAAAAAQwCAAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-07T02:46:49.86Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "Note.cs",
+              "DocumentMoniker": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Models\\Note.cs",
+              "RelativeDocumentMoniker": "ABCToMIDIConverter.Core\\Models\\Note.cs",
+              "ToolTip": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\Models\\Note.cs",
+              "RelativeToolTip": "ABCToMIDIConverter.Core\\Models\\Note.cs",
+              "ViewState": "AQIAAAkAAAAAAAAAAAAwwFUAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-07T02:46:03.902Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "ABCToMIDIConverter.UI",
+              "DocumentMoniker": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.UI\\ABCToMIDIConverter.UI.csproj",
+              "RelativeDocumentMoniker": "ABCToMIDIConverter.UI\\ABCToMIDIConverter.UI.csproj",
+              "ToolTip": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.UI\\ABCToMIDIConverter.UI.csproj",
+              "RelativeToolTip": "ABCToMIDIConverter.UI\\ABCToMIDIConverter.UI.csproj",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-08-07T02:42:45.256Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "ABCToMIDIConverter.Core",
+              "DocumentMoniker": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj",
+              "RelativeDocumentMoniker": "ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj",
+              "ToolTip": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj",
+              "RelativeToolTip": "ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-08-07T02:41:54.433Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
