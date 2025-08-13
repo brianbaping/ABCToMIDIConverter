@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using ABCToMIDIConverter.Core.Models;
 
 namespace ABCToMIDIConverter.Core.Parsers
@@ -19,9 +20,22 @@ namespace ABCToMIDIConverter.Core.Parsers
         private const int MAX_PARSE_ITERATIONS = 100_000;
         private const int MAX_RECURSION_DEPTH = 100;
         private int _recursionDepth = 0;
+        
+        // Timeout support
+        private CancellationToken _cancellationToken;
+        private DateTime _parseStartTime;
 
-        public ParseResult Parse(string abcText)
+        public ParseResult Parse(string abcText, int timeoutSeconds = 60)
         {
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(timeoutSeconds));
+            return ParseWithCancellation(abcText, cts.Token);
+        }
+
+        public ParseResult ParseWithCancellation(string abcText, CancellationToken cancellationToken = default)
+        {
+            _cancellationToken = cancellationToken;
+            _parseStartTime = DateTime.UtcNow;
+            
             if (string.IsNullOrWhiteSpace(abcText))
             {
                 _result.AddError("Input text is empty or null");
@@ -33,16 +47,33 @@ namespace ABCToMIDIConverter.Core.Parsers
                 // Reset state
                 _recursionDepth = 0;
                 
+                // Check for cancellation
+                _cancellationToken.ThrowIfCancellationRequested();
+                
                 // Tokenize with safety measures
                 var tokenizer = new AbcTokenizer();
                 _tokens = tokenizer.Tokenize(abcText);
+                
+                // Check for cancellation after tokenization
+                _cancellationToken.ThrowIfCancellationRequested();
+                
                 _currentIndex = 0;
                 _result = new ParseResult();
 
                 // Parse with safety measures
                 var tune = ParseTune();
+                
+                // Final cancellation check
+                _cancellationToken.ThrowIfCancellationRequested();
+                
                 _result.Tune = tune;
 
+                return _result;
+            }
+            catch (OperationCanceledException)
+            {
+                var elapsed = (DateTime.UtcNow - _parseStartTime).TotalSeconds;
+                _result.AddError($"Parsing operation was cancelled/timed out after {elapsed:F1} seconds. The input may be too complex or contain problematic patterns.");
                 return _result;
             }
             catch (InvalidOperationException ex) when (ex.Message.Contains("Infinite loop") || 
@@ -312,6 +343,12 @@ namespace ABCToMIDIConverter.Core.Parsers
             
             while (!IsAtEnd())
             {
+                // Periodic cancellation check
+                if (iterations % 100 == 0) // Check every 100 iterations
+                {
+                    _cancellationToken.ThrowIfCancellationRequested();
+                }
+
                 // Safety check for infinite loops - if index hasn't advanced
                 if (_currentIndex == lastIndex)
                 {

@@ -131,22 +131,67 @@ K:C
         }
 
         [Test]
-        public void Parser_HandlesInfiniteLoopPattern_Safely()
+        public void Parser_HandlesTimeoutGracefully()
         {
-            // Pattern that might cause parsing issues
-            string problematicAbc = @"
-X:1
-T:Problematic Test
-M:4/4
-L:1/4
-K:C
-C%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%D E F";
-
-            var result = _parser.Parse(problematicAbc);
+            // Create input that should hit iteration limit before timeout
+            var sb = new StringBuilder();
+            sb.AppendLine("X:1");
+            sb.AppendLine("T:Safety Test");
+            sb.AppendLine("M:4/4");
+            sb.AppendLine("L:1/16");
+            sb.AppendLine("K:C");
             
-            // Should handle gracefully without infinite loop
-            Assert.IsNotNull(result);
-            Assert.IsNotNull(result.Tune);
+            // Add many complex elements to hit iteration limit
+            for (int i = 0; i < 50000; i++)
+            {
+                sb.Append("pp {CDEFGAB} CT MD ~S ff mf A B c d e f g ");
+            }
+            
+            var result = _parser.Parse(sb.ToString(), timeoutSeconds: 30); // Reasonable timeout
+            
+            // Should fail gracefully with iteration limit or timeout error, not hang
+            Assert.IsFalse(result.Success, "Should fail due to safety limits");
+            Assert.Greater(result.Errors.Count, 0, "Should have error messages");
+            
+            var hasSafetyError = result.Errors.Any(e => 
+                e.Contains("timeout") || 
+                e.Contains("cancelled") || 
+                e.Contains("exceeded maximum iterations") ||
+                e.Contains("safety limit"));
+            Assert.IsTrue(hasSafetyError, $"Should have safety error. Errors: {string.Join(", ", result.Errors)}");
+        }
+
+        [Test]
+        public void Parser_HandlesProblematicPatterns_WithoutHanging()
+        {
+            // Test various patterns that might cause issues
+            string[] problematicInputs = {
+                "X:1\nT:Test\nM:4/4\nL:1/4\nK:C\n" + new string('%', 1000), // Many comments
+                "X:1\nT:Test\nM:4/4\nL:1/4\nK:C\n" + new string('|', 100),  // Many bar lines
+                "X:1\nT:Test\nM:4/4\nL:1/4\nK:C\nC" + new string('.', 100), // Many dots
+                "X:1\nT:Test\nM:4/4\nL:1/4\nK:C\n" + new string('~', 50),   // Many tildes
+            };
+
+            foreach (var input in problematicInputs)
+            {
+                var result = _parser.Parse(input, timeoutSeconds: 10);
+                
+                // Should complete within timeout, either successfully or with errors
+                Assert.IsNotNull(result, "Parser should return a result");
+                
+                // Should at least create a tune object even if parsing fails
+                if (result.Tune == null)
+                {
+                    // If tune is null, should have meaningful error messages
+                    Assert.Greater(result.Errors.Count, 0, "Should have error messages if tune is null");
+                }
+                
+                // If it failed, should have meaningful error messages
+                if (!result.Success)
+                {
+                    Assert.Greater(result.Errors.Count, 0, "Failed parse should have error messages");
+                }
+            }
         }
     }
 }

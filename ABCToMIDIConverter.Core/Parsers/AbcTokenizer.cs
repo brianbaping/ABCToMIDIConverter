@@ -38,19 +38,37 @@ namespace ABCToMIDIConverter.Core.Parsers
             int tokenCount = 0;
             int lastPosition = -1;
             int stuckCounter = 0;
+            int totalIterations = 0;
+            const int MAX_TOTAL_ITERATIONS = 1_000_000; // Absolute maximum iterations
 
             while (_position < _text.Length)
             {
+                // Safety check for total iterations
+                if (++totalIterations > MAX_TOTAL_ITERATIONS)
+                {
+                    throw new InvalidOperationException($"Tokenizer exceeded maximum iterations ({MAX_TOTAL_ITERATIONS:N0}). Position: {_position}, Line: {_line}, Character: '{(_position < _text.Length ? _text[_position] : "EOF")}'");
+                }
+
                 // Safety check for infinite loops - if position hasn't advanced
                 if (_position == lastPosition)
                 {
                     stuckCounter++;
                     if (stuckCounter > 3)
                     {
+                        // Log the problematic character and force advance
+                        char problematicChar = _position < _text.Length ? _text[_position] : '\0';
+                        
                         // Force advance to prevent infinite loop
                         _position++;
                         _column++;
                         stuckCounter = 0;
+                        
+                        // Create an unknown token for the problematic character
+                        if (problematicChar != '\0')
+                        {
+                            tokens.Add(new Token(TokenType.Unknown, problematicChar.ToString(), _position - 1, _line, _column - 1));
+                            tokenCount++;
+                        }
                         continue;
                     }
                 }
@@ -66,7 +84,17 @@ namespace ABCToMIDIConverter.Core.Parsers
                     throw new InvalidOperationException($"Too many tokens generated. Maximum is {MAX_TOKENS:N0}. This may indicate malformed input or an infinite loop.");
                 }
 
+                int positionBeforeToken = _position;
                 var token = GetNextToken();
+                
+                // Additional safety check - ensure position advanced or token was created
+                if (_position == positionBeforeToken && token == null)
+                {
+                    // Force advance if position didn't change and no token was created
+                    _position++;
+                    _column++;
+                }
+                
                 if (token != null)
                 {
                     tokens.Add(token);
