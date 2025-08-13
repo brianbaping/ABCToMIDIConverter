@@ -272,17 +272,29 @@ namespace ABCToMIDIConverter.Core.Parsers
                 switch (token.Type)
                 {
                     case TokenType.Note:
-                        // For now, we'll create a placeholder - we'll implement note parsing next
-                        _result.AddWarning($"Note parsing not yet implemented: {token.Value}", token.Line, token.Column);
+                        var note = ParseNote();
+                        if (note != null)
+                            tune.Elements.Add(note);
                         break;
 
                     case TokenType.Rest:
-                        _result.AddWarning($"Rest parsing not yet implemented: {token.Value}", token.Line, token.Column);
+                        var rest = ParseRest();
+                        if (rest != null)
+                            tune.Elements.Add(rest);
+                        break;
+
+                    case TokenType.Accidental:
+                        // Accidentals are handled as part of note parsing
+                        _result.AddWarning($"Standalone accidental found: {token.Value}", token.Line, token.Column);
+                        break;
+
+                    case TokenType.BarLine:
+                        // For now, just skip bar lines - we could add bar line objects later
                         break;
 
                     case TokenType.NewLine:
                     case TokenType.Comment:
-                        // Skip these for now
+                        // Skip these
                         break;
 
                     case TokenType.EndOfFile:
@@ -294,6 +306,183 @@ namespace ABCToMIDIConverter.Core.Parsers
                 }
 
                 Advance();
+            }
+        }
+
+        private Note? ParseNote()
+        {
+            var noteToken = CurrentToken();
+            if (noteToken.Type != TokenType.Note)
+                return null;
+
+            try
+            {
+                // Look for preceding accidental
+                Accidental? accidental = null;
+                if (_currentIndex > 0)
+                {
+                    var prevToken = _tokens[_currentIndex - 1];
+                    if (prevToken.Type == TokenType.Accidental)
+                    {
+                        accidental = ParseAccidentalValue(prevToken.Value);
+                    }
+                }
+
+                // Parse the note letter and octave
+                string noteValue = noteToken.Value;
+                char noteLetter = noteValue[0];
+                int octave = CalculateOctave(noteValue);
+
+                // Look for following duration
+                double duration = 1.0; // Default duration
+                if (_currentIndex + 1 < _tokens.Count)
+                {
+                    var nextToken = _tokens[_currentIndex + 1];
+                    if (nextToken.Type == TokenType.Duration)
+                    {
+                        duration = ParseDurationValue(nextToken.Value);
+                        Advance(); // Skip the duration token
+                    }
+                }
+
+                var note = new Note
+                {
+                    Pitch = char.ToUpper(noteLetter),
+                    Octave = octave,
+                    Duration = duration,
+                    Accidental = accidental ?? Accidental.Natural,
+                    IsUppercase = char.IsUpper(noteLetter)
+                };
+
+                return note;
+            }
+            catch (Exception ex)
+            {
+                _result.AddError($"Error parsing note {noteToken.Value}: {ex.Message}", noteToken.Line, noteToken.Column);
+                return null;
+            }
+        }
+
+        private Rest? ParseRest()
+        {
+            var restToken = CurrentToken();
+            if (restToken.Type != TokenType.Rest)
+                return null;
+
+            try
+            {
+                // Look for following duration
+                double duration = 1.0; // Default duration
+                if (_currentIndex + 1 < _tokens.Count)
+                {
+                    var nextToken = _tokens[_currentIndex + 1];
+                    if (nextToken.Type == TokenType.Duration)
+                    {
+                        duration = ParseDurationValue(nextToken.Value);
+                        Advance(); // Skip the duration token
+                    }
+                }
+
+                var rest = new Rest
+                {
+                    Duration = duration
+                };
+
+                return rest;
+            }
+            catch (Exception ex)
+            {
+                _result.AddError($"Error parsing rest {restToken.Value}: {ex.Message}", restToken.Line, restToken.Column);
+                return null;
+            }
+        }
+
+        private Accidental ParseAccidentalValue(string accidentalText)
+        {
+            return accidentalText switch
+            {
+                "^" => Accidental.Sharp,
+                "^^" => Accidental.DoubleSharp,
+                "_" => Accidental.Flat,
+                "__" => Accidental.DoubleFlat,
+                "=" => Accidental.Natural,
+                _ => Accidental.Natural
+            };
+        }
+
+        private int CalculateOctave(string noteValue)
+        {
+            char noteLetter = noteValue[0];
+            int octave = char.IsUpper(noteLetter) ? 4 : 5; // Middle C is C4, c is C5
+
+            // Count octave modifiers
+            for (int i = 1; i < noteValue.Length; i++)
+            {
+                switch (noteValue[i])
+                {
+                    case '\'': // Apostrophe raises octave
+                        octave++;
+                        break;
+                    case ',': // Comma lowers octave
+                        octave--;
+                        break;
+                }
+            }
+
+            return octave;
+        }
+
+        private double ParseDurationValue(string durationText)
+        {
+            if (string.IsNullOrEmpty(durationText))
+                return 1.0;
+
+            try
+            {
+                // Handle common duration patterns
+                switch (durationText)
+                {
+                    case "/":
+                    case "//":
+                        return 0.5; // Half duration
+                    case "///":
+                        return 0.25; // Quarter duration
+                    case "////":
+                        return 0.125; // Eighth duration
+                }
+
+                // Handle fraction format (e.g., "1/2", "3/4")
+                if (durationText.Contains('/'))
+                {
+                    var parts = durationText.Split('/');
+                    if (parts.Length == 2)
+                    {
+                        if (string.IsNullOrEmpty(parts[0])) // e.g., "/2"
+                        {
+                            if (int.TryParse(parts[1], out int denominator) && denominator > 0)
+                                return 1.0 / denominator;
+                        }
+                        else if (int.TryParse(parts[0], out int numerator) && 
+                                int.TryParse(parts[1], out int denom) && denom > 0)
+                        {
+                            return (double)numerator / denom;
+                        }
+                    }
+                }
+
+                // Handle whole numbers (e.g., "2", "3")
+                if (int.TryParse(durationText, out int wholeDuration))
+                {
+                    return wholeDuration;
+                }
+
+                _result.AddWarning($"Could not parse duration: {durationText}, using default 1.0");
+                return 1.0;
+            }
+            catch (Exception)
+            {
+                _result.AddWarning($"Error parsing duration: {durationText}, using default 1.0");
+                return 1.0;
             }
         }
 

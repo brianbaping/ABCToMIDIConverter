@@ -42,10 +42,23 @@
 
         // Durations and modifiers
         Duration,           // 1, 2, 1/2, 3/4, etc.
+        BrokenRhythm,       // <, >, <<, >>
 
         // Structure
         ChordStart,         // [
         ChordEnd,           // ]
+        GraceNoteStart,     // {
+        GraceNoteEnd,       // }
+        BeamBreak,          // space within notes
+
+        // Articulations and ornaments
+        Tie,                // -
+        Slur,               // (,)
+        Staccato,           // .
+        Accent,             // >
+        Trill,              // T
+        Turn,               // S
+        Mordent,            // M
 
         // Special
         NewLine,

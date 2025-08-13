@@ -104,6 +104,56 @@ namespace ABCToMIDIConverter.Core.Parsers
                 return CreateToken(TokenType.ChordEnd, "]");
             }
 
+            // Handle grace note brackets
+            if (current == '{')
+            {
+                return CreateToken(TokenType.GraceNoteStart, "{");
+            }
+
+            if (current == '}')
+            {
+                return CreateToken(TokenType.GraceNoteEnd, "}");
+            }
+
+            // Handle broken rhythm
+            if (current == '<' || current == '>')
+            {
+                return HandleBrokenRhythm();
+            }
+
+            // Handle ties and slurs
+            if (current == '-')
+            {
+                return CreateToken(TokenType.Tie, "-");
+            }
+
+            if (current == '(' || current == ')')
+            {
+                return CreateToken(TokenType.Slur, current.ToString());
+            }
+
+            // Handle articulations
+            if (current == '.')
+            {
+                return CreateToken(TokenType.Staccato, ".");
+            }
+
+            // Handle ornaments
+            if (current == 'T' && !IsPartOfNote())
+            {
+                return CreateToken(TokenType.Trill, "T");
+            }
+
+            if (current == 'S' && !IsPartOfNote())
+            {
+                return CreateToken(TokenType.Turn, "S");
+            }
+
+            if (current == 'M' && !IsPartOfNote())
+            {
+                return CreateToken(TokenType.Mordent, "M");
+            }
+
             // Handle numbers (durations)
             if (char.IsDigit(current) || current == '/')
             {
@@ -262,6 +312,37 @@ namespace ABCToMIDIConverter.Core.Parsers
         private bool IsNoteCharacter(char c)
         {
             return (c >= 'A' && c <= 'G') || (c >= 'a' && c <= 'g');
+        }
+
+        private Token HandleBrokenRhythm()
+        {
+            var start = _position;
+            var startColumn = _column;
+            char current = _text[_position];
+
+            _position++;
+            _column++;
+
+            // Check for double broken rhythm (<<, >>)
+            if (_position < _text.Length && _text[_position] == current)
+            {
+                _position++;
+                _column++;
+            }
+
+            return new Token(TokenType.BrokenRhythm, _text.Substring(start, _position - start), start, _line, startColumn);
+        }
+
+        private bool IsPartOfNote()
+        {
+            // Check if current position is part of a note sequence
+            // Look back to see if we're in the middle of a note pattern
+            if (_position > 0)
+            {
+                char prev = _text[_position - 1];
+                return IsNoteCharacter(prev) || prev == '\'' || prev == ',';
+            }
+            return false;
         }
 
         private Token CreateToken(TokenType type, string value)
