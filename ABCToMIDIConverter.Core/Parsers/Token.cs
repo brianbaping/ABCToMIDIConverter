@@ -65,6 +65,9 @@
         Marcato,            // ^
         InvertedTurn,       // ~S
 
+        // Dynamics (volume markings)
+        Dynamic,            // pp, p, mp, mf, f, ff, etc.
+
         // Special
         NewLine,
         Whitespace,

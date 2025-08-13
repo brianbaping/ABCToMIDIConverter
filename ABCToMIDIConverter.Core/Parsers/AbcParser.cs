@@ -313,6 +313,12 @@ namespace ABCToMIDIConverter.Core.Parsers
                             tune.Elements.Add(graceNotes);
                         break;
 
+                    case TokenType.Dynamic:
+                        var dynamic = ParseDynamic();
+                        if (dynamic != null)
+                            tune.Elements.Add(dynamic);
+                        break;
+
                     case TokenType.NewLine:
                     case TokenType.Comment:
                         // Skip these
@@ -615,6 +621,57 @@ namespace ABCToMIDIConverter.Core.Parsers
                 _result.AddError($"Error parsing grace notes: {ex.Message}", startToken.Line, startToken.Column);
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Parses a dynamic marking (volume indication)
+        /// </summary>
+        private Dynamics? ParseDynamic()
+        {
+            var token = CurrentToken();
+            if (token.Type != TokenType.Dynamic)
+                return null;
+
+            try
+            {
+                var dynamicType = GetDynamicType(token.Value);
+                
+                var dynamic = new Dynamics(dynamicType, token.Value)
+                {
+                    Position = token.Position,
+                    LineNumber = token.Line
+                };
+
+                return dynamic;
+            }
+            catch (Exception ex)
+            {
+                _result.AddError($"Error parsing dynamic '{token.Value}': {ex.Message}", token.Line, token.Column);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Converts dynamic text to DynamicType enum
+        /// </summary>
+        private DynamicType GetDynamicType(string text)
+        {
+            return text switch
+            {
+                "ppp" => DynamicType.Pianississimo,
+                "pp" => DynamicType.Pianissimo,
+                "p" => DynamicType.Piano,
+                "mp" => DynamicType.MezzoPiano,
+                "mf" => DynamicType.MezzoForte,
+                "f" => DynamicType.Forte,
+                "ff" => DynamicType.Fortissimo,
+                "fff" => DynamicType.Fortississimo,
+                "crescendo" or "cresc" => DynamicType.Crescendo,
+                "diminuendo" or "dim" or "decresc" => DynamicType.Diminuendo,
+                "sfz" or "sforzando" => DynamicType.Sforzando,
+                "accent" => DynamicType.Accent,
+                _ => DynamicType.MezzoForte // Default to mf
+            };
         }
 
         private Token CurrentToken()

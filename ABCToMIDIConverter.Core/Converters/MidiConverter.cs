@@ -125,6 +125,7 @@ namespace ABCToMIDIConverter.Core.Converters
             var midiNotes = new List<MidiNote>();
             long currentTime = 0;
             Ornament? pendingOrnament = null; // Track ornaments to apply to next note
+            Dynamics? currentDynamic = null; // Track current dynamic for velocity calculations
 
             if (tune.Elements == null || tune.Elements.Count == 0)
             {
@@ -141,6 +142,12 @@ namespace ABCToMIDIConverter.Core.Converters
                 {
                     case Note note:
                         var midiNote = ConvertNoteToMidi(note, currentTime, calculator, tune.KeySignature);
+                        
+                        // Apply current dynamic if present
+                        if (currentDynamic != null)
+                        {
+                            ApplyDynamicToMidiNote(midiNote, currentDynamic);
+                        }
                         
                         // Apply any pending ornament
                         if (pendingOrnament != null)
@@ -163,6 +170,11 @@ namespace ABCToMIDIConverter.Core.Converters
                         pendingOrnament = null; // Clear any pending ornament
                         break;
 
+                    case Dynamics dynamic:
+                        // Update current dynamic - it will affect all subsequent notes
+                        currentDynamic = dynamic;
+                        break;
+
                     case GraceNotes graceNotes:
                         // Convert grace notes
                         var graceNoteDuration = CalculateGraceNoteDuration(graceNotes, calculator);
@@ -171,6 +183,13 @@ namespace ABCToMIDIConverter.Core.Converters
                             var graceMidiNote = ConvertNoteToMidi(graceNote, currentTime, calculator, tune.KeySignature);
                             graceMidiNote.Duration = graceNoteDuration;
                             graceMidiNote.Velocity = (int)(graceMidiNote.Velocity * 0.7); // Grace notes are quieter
+                            
+                            // Apply current dynamic to grace notes too
+                            if (currentDynamic != null)
+                            {
+                                ApplyDynamicToMidiNote(graceMidiNote, currentDynamic);
+                            }
+                            
                             midiNotes.Add(graceMidiNote);
                             currentTime += graceNoteDuration;
                         }
@@ -313,6 +332,38 @@ namespace ABCToMIDIConverter.Core.Converters
 
             // For now, use a consistent velocity with slight variation
             return Math.Max(40, Math.Min(127, velocity));
+        }
+
+        /// <summary>
+        /// Applies dynamic marking to a MIDI note's velocity
+        /// </summary>
+        private void ApplyDynamicToMidiNote(MidiNote midiNote, Dynamics dynamic)
+        {
+            if (midiNote == null || dynamic == null)
+                return;
+
+            // Set velocity based on dynamic type
+            midiNote.Velocity = dynamic.Velocity;
+
+            // Apply any velocity modifiers based on dynamic type
+            switch (dynamic.Type)
+            {
+                case DynamicType.Sforzando:
+                    // Sudden accent - keep full velocity but could add articulation
+                    break;
+                case DynamicType.Accent:
+                    // Accented note - slight increase if not already at max
+                    midiNote.Velocity = Math.Min(127, midiNote.Velocity + 10);
+                    break;
+                case DynamicType.Crescendo:
+                case DynamicType.Diminuendo:
+                    // These would need context of surrounding notes for gradual change
+                    // For now, just use the base velocity
+                    break;
+            }
+
+            // Ensure velocity stays within MIDI range
+            midiNote.Velocity = Math.Max(1, Math.Min(127, midiNote.Velocity));
         }
 
         /// <summary>

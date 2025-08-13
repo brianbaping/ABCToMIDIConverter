@@ -69,6 +69,14 @@ namespace ABCToMIDIConverter.Core.Parsers
                 return HandleInformationField();
             }
 
+            // Handle dynamics BEFORE notes to prevent 'f' and 'p' from being parsed as notes
+            if (char.IsLetter(current) && CouldStartDynamic())
+            {
+                var dynamicToken = TryHandleDynamic();
+                if (dynamicToken != null)
+                    return dynamicToken;
+            }
+
             // Handle accidentals
             if (current == '^' || current == '_' || current == '=')
             {
@@ -428,6 +436,69 @@ namespace ABCToMIDIConverter.Core.Parsers
             
             // If not a recognized inverted ornament, treat as unknown
             return new Token(TokenType.Unknown, "~", start, _line, startColumn);
+        }
+
+        /// <summary>
+        /// Checks if the current position could start a dynamic marking
+        /// </summary>
+        private bool CouldStartDynamic()
+        {
+            char current = _text[_position];
+            
+            // Dynamics typically start with p, m, f, s, c, d
+            return current == 'p' || current == 'm' || current == 'f' || 
+                   current == 's' || current == 'c' || current == 'd';
+        }
+
+        /// <summary>
+        /// Attempts to parse a dynamic marking
+        /// </summary>
+        private Token? TryHandleDynamic()
+        {
+            int start = _position;
+            int startColumn = _column;
+            var sb = new StringBuilder();
+
+            // Read potential dynamic text
+            while (_position < _text.Length && char.IsLetter(_text[_position]))
+            {
+                sb.Append(_text[_position]);
+                _position++;
+                _column++;
+            }
+
+            string dynamicText = sb.ToString();
+
+            // Check if it's a recognized dynamic marking
+            if (IsRecognizedDynamic(dynamicText))
+            {
+                return new Token(TokenType.Dynamic, dynamicText, start, _line, startColumn);
+            }
+
+            // Reset position if not a dynamic
+            _position = start;
+            _column = startColumn;
+            return null;
+        }
+
+        /// <summary>
+        /// Checks if the given text is a recognized dynamic marking
+        /// </summary>
+        private bool IsRecognizedDynamic(string text)
+        {
+            return text switch
+            {
+                // Standard dynamics
+                "ppp" or "pp" or "p" or "mp" or "mf" or "f" or "ff" or "fff" => true,
+                
+                // Gradual changes
+                "crescendo" or "cresc" or "diminuendo" or "dim" or "decresc" => true,
+                
+                // Special markings
+                "sfz" or "sforzando" or "accent" => true,
+                
+                _ => false
+            };
         }
 
         private Token CreateToken(TokenType type, string value)
