@@ -1,0 +1,7 @@
+X:1
+T:Timeout Test
+M:4/4
+K:C
+% This is a simple test file - if this hangs, there's an issue with basic parsing
+C C C C | D D D D | E E E E | F F F F |
+G G G G | A A A A | B B B B | c c c c |

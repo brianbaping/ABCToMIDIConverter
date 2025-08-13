@@ -171,14 +171,16 @@ namespace ABCToMIDIConverter.UI.ViewModels
             return !string.IsNullOrWhiteSpace(AbcText) && !IsConverting;
         }
 
-        private void ExecuteParse()
+        private async void ExecuteParse()
         {
             try
             {
                 StatusText = "Parsing...";
                 OutputMessages = "🎵 Parsing ABC notation...\n";
+                IsConverting = true; // Prevent multiple simultaneous parses
 
-                var result = _parser.Parse(AbcText);
+                // Run parsing on a background thread with timeout
+                var result = await Task.Run(() => _parser.Parse(AbcText, timeoutSeconds: 30));
 
                 if (result.Success)
                 {
@@ -211,11 +213,21 @@ namespace ABCToMIDIConverter.UI.ViewModels
 
                 CommandManager.InvalidateRequerySuggested();
             }
+            catch (OperationCanceledException)
+            {
+                OutputMessages += $"⏱️ Parsing timed out after 30 seconds - file may be too complex\n";
+                StatusText = "Parsing timed out";
+                _logger?.LogWarning("ABC parsing timed out");
+            }
             catch (Exception ex)
             {
                 OutputMessages += $"❌ Error during parsing: {ex.Message}\n";
                 StatusText = "Error occurred";
                 _logger?.LogError(ex, "Error during ABC parsing");
+            }
+            finally
+            {
+                IsConverting = false;
             }
         }
 

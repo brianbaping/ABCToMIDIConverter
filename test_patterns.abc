@@ -1,0 +1,10 @@
+X:1
+T:Problematic Pattern Test  
+M:4/4
+K:C
+% Test various patterns that might cause issues
+!pp! C C C C | D D D D |
+[CEG] [DFA] [EGB] [FAc] |
+~C ^C _C =C | ^D _D =D D |
+C/2D/2E/2F/2 G/4A/4B/4c/4 | d/8e/8f/8g/8a/8b/8c'/8d'/8 |
+(3CDE (3FGA (3Bcd | (5CDEFG (5ABcde |

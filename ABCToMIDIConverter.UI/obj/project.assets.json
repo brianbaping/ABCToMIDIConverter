@@ -928,8 +928,8 @@
         "net8.0-windows7.0": {
           "targetAlias": "net8.0-windows",
           "projectReferences": {
-            "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj": {
-              "projectPath": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj"
+            "d:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj": {
+              "projectPath": "d:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj"
             }
           }
         }

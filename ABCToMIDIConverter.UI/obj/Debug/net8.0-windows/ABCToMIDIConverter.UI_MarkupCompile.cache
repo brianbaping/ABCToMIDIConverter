@@ -4,16 +4,16 @@
 winexe
 C#
 .cs
-D:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.UI\obj\Debug\net8.0-windows\
+d:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.UI\obj\Debug\net8.0-windows\
 ABCToMIDIConverter.UI
 none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP
-D:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.UI\App.xaml
+d:\Brian\Development\ABCToMIDIConverter\ABCToMIDIConverter.UI\App.xaml
 11407045341
 
 735142883
-2201868360613
+220594087667
 MainWindow.xaml;
 
 False
