@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ABCToMIDIConverter.UI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b30459aa3f9c3333f4ab5a63f29107f5c37fc0e0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+effa58b45792a0a3824f6d63ac65f7812fa378f4")]
 [assembly: System.Reflection.AssemblyProductAttribute("ABCToMIDIConverter.UI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ABCToMIDIConverter.UI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

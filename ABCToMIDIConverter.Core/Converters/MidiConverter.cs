@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using NAudio.Midi;
 using ABCToMIDIConverter.Core.Models;
 
@@ -12,11 +14,13 @@ namespace ABCToMIDIConverter.Core.Converters
     public class MidiConverter
     {
         private const int TicksPerQuarterNote = 480;
+        private const int DEFAULT_TIMEOUT_SECONDS = 30; // 30 second timeout for conversion
+        private const int MAX_MIDI_EVENTS = 100_000; // Maximum MIDI events to prevent memory issues
 
         /// <summary>
         /// Converts an ABC tune to a MIDI file
         /// </summary>
-        public void ConvertToMidiFile(AbcTune tune, string outputPath)
+        public void ConvertToMidiFile(AbcTune tune, string outputPath, int timeoutSeconds = DEFAULT_TIMEOUT_SECONDS)
         {
             if (tune == null)
                 throw new ArgumentNullException(nameof(tune));
@@ -24,6 +28,25 @@ namespace ABCToMIDIConverter.Core.Converters
             if (string.IsNullOrEmpty(outputPath))
                 throw new ArgumentException("Output path cannot be empty", nameof(outputPath));
 
+            // Use a cancellation token to implement timeout
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(timeoutSeconds));
+            
+            try
+            {
+                var task = Task.Run(() => ConvertToMidiFileInternal(tune, outputPath, cts.Token), cts.Token);
+                task.Wait(cts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                throw new TimeoutException($"MIDI conversion timed out after {timeoutSeconds} seconds. The input may be too complex.");
+            }
+        }
+
+        /// <summary>
+        /// Internal method that does the actual conversion work
+        /// </summary>
+        private void ConvertToMidiFileInternal(AbcTune tune, string outputPath, CancellationToken cancellationToken)
+        {
             // Create MIDI event collection
             var midiEventCollection = new MidiEventCollection(1, TicksPerQuarterNote);
 
@@ -44,8 +67,8 @@ namespace ABCToMIDIConverter.Core.Converters
             var keySignatureBytes = GetKeySignatureBytes(tune.KeySignature);
             track.Add(new KeySignatureEvent(keySignatureBytes[0], keySignatureBytes[1], 0));
 
-            // Convert musical elements to MIDI
-            var midiNotes = ConvertToMidiNotes(tune, calculator);
+            // Convert musical elements to MIDI with cancellation support
+            var midiNotes = ConvertToMidiNotes(tune, calculator, cancellationToken);
 
             // Add note events
             foreach (var midiNote in midiNotes)
@@ -100,7 +123,7 @@ namespace ABCToMIDIConverter.Core.Converters
 
             // Convert notes using timing calculator
             var calculator = new TimingCalculator(tune.TimeSignature, tune.UnitNoteLength, TicksPerQuarterNote);
-            var midiNotes = ConvertToMidiNotes(tune, calculator);
+            var midiNotes = ConvertToMidiNotes(tune, calculator); // Uses default cancellation token
 
             // Add MIDI events to track
             foreach (var note in midiNotes)
@@ -120,7 +143,7 @@ namespace ABCToMIDIConverter.Core.Converters
         /// <summary>
         /// Converts ABC musical elements to MIDI notes
         /// </summary>
-        private List<MidiNote> ConvertToMidiNotes(AbcTune tune, TimingCalculator calculator)
+        private List<MidiNote> ConvertToMidiNotes(AbcTune tune, TimingCalculator calculator, CancellationToken cancellationToken = default)
         {
             var midiNotes = new List<MidiNote>();
             long currentTime = 0;
@@ -133,9 +156,27 @@ namespace ABCToMIDIConverter.Core.Converters
                 return midiNotes;
             }
 
+            // Safety check for too many elements
+            if (tune.Elements.Count > 50_000)
+            {
+                throw new InvalidOperationException($"Too many musical elements ({tune.Elements.Count:N0}). Maximum supported is 50,000 to prevent memory issues.");
+            }
+
             // Process each musical element
             for (int i = 0; i < tune.Elements.Count; i++)
             {
+                // Check for cancellation periodically
+                if (i % 100 == 0) // Check every 100 elements
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+
+                // Safety check for too many MIDI notes
+                if (midiNotes.Count > MAX_MIDI_EVENTS)
+                {
+                    throw new InvalidOperationException($"Too many MIDI events generated ({midiNotes.Count:N0}). Maximum is {MAX_MIDI_EVENTS:N0}.");
+                }
+
                 var element = tune.Elements[i];
 
                 switch (element)

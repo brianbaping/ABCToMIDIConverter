@@ -14,6 +14,11 @@ namespace ABCToMIDIConverter.Core.Parsers
         private List<Token> _tokens = new List<Token>();
         private int _currentIndex;
         private ParseResult _result = new ParseResult();
+        
+        // Safety limits to prevent infinite loops and stack overflow
+        private const int MAX_PARSE_ITERATIONS = 100_000;
+        private const int MAX_RECURSION_DEPTH = 100;
+        private int _recursionDepth = 0;
 
         public ParseResult Parse(string abcText)
         {
@@ -25,16 +30,35 @@ namespace ABCToMIDIConverter.Core.Parsers
 
             try
             {
-                // Tokenize
+                // Reset state
+                _recursionDepth = 0;
+                
+                // Tokenize with safety measures
                 var tokenizer = new AbcTokenizer();
                 _tokens = tokenizer.Tokenize(abcText);
                 _currentIndex = 0;
                 _result = new ParseResult();
 
-                // Parse
+                // Parse with safety measures
                 var tune = ParseTune();
                 _result.Tune = tune;
 
+                return _result;
+            }
+            catch (InvalidOperationException ex) when (ex.Message.Contains("Infinite loop") || 
+                                                        (ex.Message.Contains("Too many") && !ex.Message.Contains("too large")))
+            {
+                _result.AddError($"Parsing failed due to safety limit: {ex.Message}");
+                return _result;
+            }
+            catch (StackOverflowException)
+            {
+                _result.AddError("Parsing failed due to stack overflow. The input may be too complex or contain recursive structures.");
+                return _result;
+            }
+            catch (OutOfMemoryException)
+            {
+                _result.AddError("Parsing failed due to out of memory. The input file may be too large.");
                 return _result;
             }
             catch (Exception ex)
@@ -59,15 +83,32 @@ namespace ABCToMIDIConverter.Core.Parsers
 
         private void ParseHeader(AbcTune tune)
         {
+            int iterations = 0;
+            
             while (!IsAtEnd() && CurrentToken().Type == TokenType.InformationField)
             {
+                // Safety check for too many header fields
+                if (++iterations > 1000) // Reasonable limit for header fields
+                {
+                    _result.AddError("Too many header fields. Parsing stopped to prevent infinite loop.");
+                    break;
+                }
+
                 var token = CurrentToken();
                 ParseInformationField(token, tune);
                 Advance();
 
-                // Skip newlines
+                // Skip newlines with safety check
+                int newlineSkips = 0;
                 while (!IsAtEnd() && CurrentToken().Type == TokenType.NewLine)
+                {
+                    if (++newlineSkips > 1000) // Prevent infinite newline skipping
+                    {
+                        _result.AddError("Too many consecutive newlines in header. Parsing stopped.");
+                        break;
+                    }
                     Advance();
+                }
 
                 // Break if we hit K: field (end of header)
                 if (token.Value.StartsWith("K:"))
@@ -265,8 +306,37 @@ namespace ABCToMIDIConverter.Core.Parsers
 
         private void ParseBody(AbcTune tune)
         {
+            int iterations = 0;
+            int lastIndex = -1;
+            int stuckCounter = 0;
+            
             while (!IsAtEnd())
             {
+                // Safety check for infinite loops - if index hasn't advanced
+                if (_currentIndex == lastIndex)
+                {
+                    stuckCounter++;
+                    if (stuckCounter > 3)
+                    {
+                        _result.AddError($"Parser stuck at token index {_currentIndex}. Skipping token: {CurrentToken().Type} - {CurrentToken().Value}", CurrentToken().Line, CurrentToken().Column);
+                        Advance(); // Force advance to prevent infinite loop
+                        stuckCounter = 0;
+                        continue;
+                    }
+                }
+                else
+                {
+                    lastIndex = _currentIndex;
+                    stuckCounter = 0;
+                }
+
+                // Safety check for too many iterations
+                if (++iterations > MAX_PARSE_ITERATIONS)
+                {
+                    _result.AddError($"Parser exceeded maximum iterations ({MAX_PARSE_ITERATIONS:N0}). Parsing stopped to prevent infinite loop.");
+                    break;
+                }
+
                 var token = CurrentToken();
 
                 switch (token.Type)
@@ -572,8 +642,16 @@ namespace ABCToMIDIConverter.Core.Parsers
                 Advance(); // Skip the opening brace
 
                 // Parse notes within the grace note group
+                int graceNoteIterations = 0;
                 while (!IsAtEnd() && CurrentToken().Type != TokenType.GraceNoteEnd)
                 {
+                    // Safety check for too many grace notes
+                    if (++graceNoteIterations > 100) // Reasonable limit for grace notes in a group
+                    {
+                        _result.AddError("Too many grace notes in group. Parsing stopped.", CurrentToken().Line, CurrentToken().Column);
+                        break;
+                    }
+
                     var token = CurrentToken();
 
                     switch (token.Type)

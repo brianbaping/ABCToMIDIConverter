@@ -14,22 +14,63 @@ namespace ABCToMIDIConverter.Core.Parsers
         private int _position;
         private int _line;
         private int _column;
+        
+        // Safety limits to prevent infinite loops and memory issues
+        private const int MAX_TEXT_LENGTH = 10_000_000; // 10MB limit
+        private const int MAX_TOKENS = 1_000_000; // Maximum tokens to prevent memory exhaustion
+        private const int MAX_ITERATIONS_PER_TOKEN = 1000; // Prevent infinite loops in token parsing
 
         public List<Token> Tokenize(string text)
         {
             _text = text ?? throw new ArgumentNullException(nameof(text));
+            
+            // Safety check for input size
+            if (_text.Length > MAX_TEXT_LENGTH)
+            {
+                throw new InvalidOperationException($"Input text too large. Maximum size is {MAX_TEXT_LENGTH:N0} characters, but received {_text.Length:N0} characters.");
+            }
+            
             _position = 0;
             _line = 1;
             _column = 1;
 
             var tokens = new List<Token>();
+            int tokenCount = 0;
+            int lastPosition = -1;
+            int stuckCounter = 0;
 
             while (_position < _text.Length)
             {
+                // Safety check for infinite loops - if position hasn't advanced
+                if (_position == lastPosition)
+                {
+                    stuckCounter++;
+                    if (stuckCounter > 3)
+                    {
+                        // Force advance to prevent infinite loop
+                        _position++;
+                        _column++;
+                        stuckCounter = 0;
+                        continue;
+                    }
+                }
+                else
+                {
+                    lastPosition = _position;
+                    stuckCounter = 0;
+                }
+
+                // Safety check for too many tokens
+                if (tokenCount >= MAX_TOKENS)
+                {
+                    throw new InvalidOperationException($"Too many tokens generated. Maximum is {MAX_TOKENS:N0}. This may indicate malformed input or an infinite loop.");
+                }
+
                 var token = GetNextToken();
                 if (token != null)
                 {
                     tokens.Add(token);
+                    tokenCount++;
                 }
             }
 
@@ -190,6 +231,7 @@ namespace ABCToMIDIConverter.Core.Parsers
 
         private void SkipWhitespace()
         {
+            int iterations = 0;
             while (_position < _text.Length &&
                    char.IsWhiteSpace(_text[_position]) &&
                    _text[_position] != '\n' &&
@@ -197,6 +239,12 @@ namespace ABCToMIDIConverter.Core.Parsers
             {
                 _position++;
                 _column++;
+                
+                // Safety check to prevent infinite loops
+                if (++iterations > MAX_ITERATIONS_PER_TOKEN)
+                {
+                    throw new InvalidOperationException($"Infinite loop detected in SkipWhitespace at position {_position}, line {_line}, column {_column}");
+                }
             }
         }
 
@@ -222,12 +270,19 @@ namespace ABCToMIDIConverter.Core.Parsers
         {
             var start = _position;
             var startColumn = _column;
+            int iterations = 0;
 
             // Skip until end of line
             while (_position < _text.Length && _text[_position] != '\n' && _text[_position] != '\r')
             {
                 _position++;
                 _column++;
+                
+                // Safety check to prevent infinite loops
+                if (++iterations > MAX_ITERATIONS_PER_TOKEN)
+                {
+                    throw new InvalidOperationException($"Infinite loop detected in HandleComment at position {_position}, line {_line}, column {_column}");
+                }
             }
 
             return new Token(TokenType.Comment, _text.Substring(start, _position - start), start, _line, startColumn);
@@ -237,6 +292,7 @@ namespace ABCToMIDIConverter.Core.Parsers
         {
             var start = _position;
             var startColumn = _column;
+            int iterations = 0;
 
             // Read field identifier (letter + colon)
             _position++;
@@ -249,6 +305,12 @@ namespace ABCToMIDIConverter.Core.Parsers
             {
                 _position++;
                 _column++;
+                
+                // Safety check to prevent infinite loops
+                if (++iterations > MAX_ITERATIONS_PER_TOKEN)
+                {
+                    throw new InvalidOperationException($"Infinite loop detected in HandleInformationField at position {_position}, line {_line}, column {_column}");
+                }
             }
 
             return new Token(TokenType.InformationField, _text.Substring(start, _position - start), start, _line, startColumn);
@@ -277,6 +339,7 @@ namespace ABCToMIDIConverter.Core.Parsers
         {
             var start = _position;
             var startColumn = _column;
+            int iterations = 0;
 
             // Read the note letter
             _position++;
@@ -287,6 +350,12 @@ namespace ABCToMIDIConverter.Core.Parsers
             {
                 _position++;
                 _column++;
+                
+                // Safety check to prevent infinite loops
+                if (++iterations > MAX_ITERATIONS_PER_TOKEN)
+                {
+                    throw new InvalidOperationException($"Infinite loop detected in HandleNote at position {_position}, line {_line}, column {_column}");
+                }
             }
 
             return new Token(TokenType.Note, _text.Substring(start, _position - start), start, _line, startColumn);
@@ -307,12 +376,19 @@ namespace ABCToMIDIConverter.Core.Parsers
         {
             var start = _position;
             var startColumn = _column;
+            int iterations = 0;
 
             // Handle different bar line combinations: |, ||, |:, :|, ::, etc.
             while (_position < _text.Length && (_text[_position] == '|' || _text[_position] == ':'))
             {
                 _position++;
                 _column++;
+                
+                // Safety check to prevent infinite loops
+                if (++iterations > MAX_ITERATIONS_PER_TOKEN)
+                {
+                    throw new InvalidOperationException($"Infinite loop detected in HandleBarLine at position {_position}, line {_line}, column {_column}");
+                }
             }
 
             return new Token(TokenType.BarLine, _text.Substring(start, _position - start), start, _line, startColumn);
@@ -322,12 +398,19 @@ namespace ABCToMIDIConverter.Core.Parsers
         {
             var start = _position;
             var startColumn = _column;
+            int iterations = 0;
 
             // Handle patterns like: 2, 1/2, 3/4, /2, //
             while (_position < _text.Length && (char.IsDigit(_text[_position]) || _text[_position] == '/'))
             {
                 _position++;
                 _column++;
+                
+                // Safety check to prevent infinite loops
+                if (++iterations > MAX_ITERATIONS_PER_TOKEN)
+                {
+                    throw new InvalidOperationException($"Infinite loop detected in HandleDuration at position {_position}, line {_line}, column {_column}");
+                }
             }
 
             return new Token(TokenType.Duration, _text.Substring(start, _position - start), start, _line, startColumn);
@@ -458,6 +541,7 @@ namespace ABCToMIDIConverter.Core.Parsers
             int start = _position;
             int startColumn = _column;
             var sb = new StringBuilder();
+            int iterations = 0;
 
             // Read potential dynamic text
             while (_position < _text.Length && char.IsLetter(_text[_position]))
@@ -465,6 +549,12 @@ namespace ABCToMIDIConverter.Core.Parsers
                 sb.Append(_text[_position]);
                 _position++;
                 _column++;
+                
+                // Safety check to prevent infinite loops
+                if (++iterations > MAX_ITERATIONS_PER_TOKEN)
+                {
+                    throw new InvalidOperationException($"Infinite loop detected in TryHandleDynamic at position {_position}, line {_line}, column {_column}");
+                }
             }
 
             string dynamicText = sb.ToString();
