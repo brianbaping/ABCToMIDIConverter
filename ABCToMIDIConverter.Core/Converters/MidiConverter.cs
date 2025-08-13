@@ -124,6 +124,7 @@ namespace ABCToMIDIConverter.Core.Converters
         {
             var midiNotes = new List<MidiNote>();
             long currentTime = 0;
+            Ornament? pendingOrnament = null; // Track ornaments to apply to next note
 
             if (tune.Elements == null || tune.Elements.Count == 0)
             {
@@ -132,13 +133,26 @@ namespace ABCToMIDIConverter.Core.Converters
             }
 
             // Process each musical element
-            foreach (var element in tune.Elements)
+            for (int i = 0; i < tune.Elements.Count; i++)
             {
+                var element = tune.Elements[i];
+
                 switch (element)
                 {
                     case Note note:
                         var midiNote = ConvertNoteToMidi(note, currentTime, calculator, tune.KeySignature);
-                        midiNotes.Add(midiNote);
+                        
+                        // Apply any pending ornament
+                        if (pendingOrnament != null)
+                        {
+                            ApplyOrnamentToMidiNote(midiNote, pendingOrnament, midiNotes, currentTime, calculator, tune.KeySignature);
+                            pendingOrnament = null;
+                        }
+                        else
+                        {
+                            midiNotes.Add(midiNote);
+                        }
+                        
                         currentTime += midiNote.Duration;
                         break;
 
@@ -146,6 +160,25 @@ namespace ABCToMIDIConverter.Core.Converters
                         // For rests, just advance the time without adding a note
                         var restDuration = calculator.GetMidiDuration(rest.Duration);
                         currentTime += restDuration;
+                        pendingOrnament = null; // Clear any pending ornament
+                        break;
+
+                    case GraceNotes graceNotes:
+                        // Convert grace notes
+                        var graceNoteDuration = CalculateGraceNoteDuration(graceNotes, calculator);
+                        foreach (var graceNote in graceNotes.Notes)
+                        {
+                            var graceMidiNote = ConvertNoteToMidi(graceNote, currentTime, calculator, tune.KeySignature);
+                            graceMidiNote.Duration = graceNoteDuration;
+                            graceMidiNote.Velocity = (int)(graceMidiNote.Velocity * 0.7); // Grace notes are quieter
+                            midiNotes.Add(graceMidiNote);
+                            currentTime += graceNoteDuration;
+                        }
+                        break;
+
+                    case Ornament ornament:
+                        // Store ornament to apply to the next note
+                        pendingOrnament = ornament;
                         break;
 
                     default:
@@ -297,6 +330,165 @@ namespace ABCToMIDIConverter.Core.Converters
                 32 => 5,  // thirty-second note
                 _ => 2    // default to quarter note
             };
+        }
+
+        /// <summary>
+        /// Applies an ornament to a MIDI note, potentially creating additional notes
+        /// </summary>
+        private void ApplyOrnamentToMidiNote(MidiNote mainNote, Ornament ornament, List<MidiNote> midiNotes, long currentTime, TimingCalculator calculator, KeySignature keySignature)
+        {
+            switch (ornament)
+            {
+                case Trill trill:
+                    ApplyTrill(mainNote, trill, midiNotes, calculator, keySignature);
+                    break;
+
+                case Turn turn:
+                    ApplyTurn(mainNote, turn, midiNotes, calculator, keySignature);
+                    break;
+
+                case Mordent mordent:
+                    ApplyMordent(mainNote, mordent, midiNotes, calculator, keySignature);
+                    break;
+
+                case Articulation articulation:
+                    ApplyArticulation(mainNote, articulation);
+                    midiNotes.Add(mainNote);
+                    break;
+
+                default:
+                    // For unknown ornaments, just add the note without modification
+                    midiNotes.Add(mainNote);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Applies a trill ornament to a MIDI note
+        /// </summary>
+        private void ApplyTrill(MidiNote mainNote, Trill trill, List<MidiNote> midiNotes, TimingCalculator calculator, KeySignature keySignature)
+        {
+            // Create alternating notes for the trill
+            long trillNoteDuration = mainNote.Duration / 8; // Each trill note is 1/8 of the main note
+            int alternateNote = mainNote.NoteNumber + (trill.IsUpperTrill ? trill.Interval : -trill.Interval);
+
+            long currentTime = mainNote.StartTime;
+            bool useMainNote = true;
+
+            // Create 8 alternating notes for the trill
+            for (int i = 0; i < 8; i++)
+            {
+                var trillNote = new MidiNote
+                {
+                    NoteNumber = useMainNote ? mainNote.NoteNumber : alternateNote,
+                    StartTime = currentTime,
+                    Duration = trillNoteDuration,
+                    Velocity = (int)(mainNote.Velocity * 0.9), // Slightly softer than main note
+                    Channel = mainNote.Channel
+                };
+
+                midiNotes.Add(trillNote);
+                currentTime += trillNoteDuration;
+                useMainNote = !useMainNote;
+            }
+        }
+
+        /// <summary>
+        /// Applies a turn ornament to a MIDI note
+        /// </summary>
+        private void ApplyTurn(MidiNote mainNote, Turn turn, List<MidiNote> midiNotes, TimingCalculator calculator, KeySignature keySignature)
+        {
+            // A turn is typically: upper neighbor, main note, lower neighbor, main note
+            long turnNoteDuration = mainNote.Duration / 4;
+            var turnNotes = new int[4];
+
+            if (turn.IsInverted)
+            {
+                // Inverted turn: lower, main, upper, main
+                turnNotes[0] = mainNote.NoteNumber - 2; // Lower neighbor
+                turnNotes[1] = mainNote.NoteNumber;     // Main note
+                turnNotes[2] = mainNote.NoteNumber + 2; // Upper neighbor
+                turnNotes[3] = mainNote.NoteNumber;     // Main note
+            }
+            else
+            {
+                // Normal turn: upper, main, lower, main
+                turnNotes[0] = mainNote.NoteNumber + 2; // Upper neighbor
+                turnNotes[1] = mainNote.NoteNumber;     // Main note
+                turnNotes[2] = mainNote.NoteNumber - 2; // Lower neighbor
+                turnNotes[3] = mainNote.NoteNumber;     // Main note
+            }
+
+            long currentTime = mainNote.StartTime;
+            for (int i = 0; i < 4; i++)
+            {
+                var turnNote = new MidiNote
+                {
+                    NoteNumber = turnNotes[i],
+                    StartTime = currentTime,
+                    Duration = turnNoteDuration,
+                    Velocity = (int)(mainNote.Velocity * 0.8),
+                    Channel = mainNote.Channel
+                };
+
+                midiNotes.Add(turnNote);
+                currentTime += turnNoteDuration;
+            }
+        }
+
+        /// <summary>
+        /// Applies a mordent ornament to a MIDI note
+        /// </summary>
+        private void ApplyMordent(MidiNote mainNote, Mordent mordent, List<MidiNote> midiNotes, TimingCalculator calculator, KeySignature keySignature)
+        {
+            // A mordent is a quick alternation: main note, neighbor, main note
+            long mordentNoteDuration = mainNote.Duration / 3;
+            int neighborNote = mainNote.NoteNumber + (mordent.IsInverted ? -2 : 2);
+
+            var notes = new[]
+            {
+                mainNote.NoteNumber,  // Main note
+                neighborNote,         // Neighbor note
+                mainNote.NoteNumber   // Main note again
+            };
+
+            long currentTime = mainNote.StartTime;
+            for (int i = 0; i < 3; i++)
+            {
+                var mordentNote = new MidiNote
+                {
+                    NoteNumber = notes[i],
+                    StartTime = currentTime,
+                    Duration = mordentNoteDuration,
+                    Velocity = (int)(mainNote.Velocity * (i == 1 ? 0.7 : 0.9)), // Neighbor note softer
+                    Channel = mainNote.Channel
+                };
+
+                midiNotes.Add(mordentNote);
+                currentTime += mordentNoteDuration;
+            }
+        }
+
+        /// <summary>
+        /// Applies articulation effects to a MIDI note
+        /// </summary>
+        private void ApplyArticulation(MidiNote note, Articulation articulation)
+        {
+            // Modify duration and velocity based on articulation type
+            note.Duration = (long)(note.Duration * articulation.DurationMultiplier);
+            note.Velocity = (int)(note.Velocity * articulation.VelocityMultiplier);
+
+            // Ensure velocity stays within MIDI range
+            note.Velocity = Math.Max(1, Math.Min(127, note.Velocity));
+        }
+
+        /// <summary>
+        /// Calculates the duration for grace notes
+        /// </summary>
+        private long CalculateGraceNoteDuration(GraceNotes graceNotes, TimingCalculator calculator)
+        {
+            // Grace notes typically take a small fraction of a beat
+            return calculator.GetMidiDuration(graceNotes.Duration);
         }
 
         /// <summary>

@@ -138,7 +138,12 @@ namespace ABCToMIDIConverter.Core.Parsers
                 return CreateToken(TokenType.Staccato, ".");
             }
 
-            // Handle ornaments
+            // Handle ornaments - enhanced support
+            if (current == '~')
+            {
+                return HandleInvertedOrnament();
+            }
+
             if (current == 'T' && !IsPartOfNote())
             {
                 return CreateToken(TokenType.Trill, "T");
@@ -152,6 +157,17 @@ namespace ABCToMIDIConverter.Core.Parsers
             if (current == 'M' && !IsPartOfNote())
             {
                 return CreateToken(TokenType.Mordent, "M");
+            }
+
+            if (current == 'H' && !IsPartOfNote())
+            {
+                return CreateToken(TokenType.Fermata, "H");
+            }
+
+            // Handle accent and marcato (need to distinguish from broken rhythm)
+            if (current == '^' && !IsPartOfAccidental())
+            {
+                return CreateToken(TokenType.Marcato, "^");
             }
 
             // Handle numbers (durations)
@@ -336,13 +352,82 @@ namespace ABCToMIDIConverter.Core.Parsers
         private bool IsPartOfNote()
         {
             // Check if current position is part of a note sequence
-            // Look back to see if we're in the middle of a note pattern
+            // This should only return true if we're in the middle of parsing a single note
+            // For example: "C'" (with octave) or "C," (with octave)
+            // But NOT for separate tokens like ornaments that follow notes
+            
             if (_position > 0)
             {
                 char prev = _text[_position - 1];
-                return IsNoteCharacter(prev) || prev == '\'' || prev == ',';
+                char current = _text[_position];
+                
+                // Only consider it part of a note if:
+                // 1. Previous char is a note AND current is an octave modifier (', or ,)
+                // 2. OR we're continuing an octave sequence
+                if (IsNoteCharacter(prev) && (current == '\'' || current == ','))
+                {
+                    return true;
+                }
+                
+                // Continue octave sequences
+                if ((prev == '\'' && current == '\'') || (prev == ',' && current == ','))
+                {
+                    return true;
+                }
             }
+            
             return false;
+        }
+
+        private bool IsPartOfAccidental()
+        {
+            // Check if current position is part of an accidental sequence
+            // Look back to see if we're already in an accidental pattern
+            if (_position > 0)
+            {
+                char prev = _text[_position - 1];
+                return prev == '^' || prev == '_' || prev == '=';
+            }
+            
+            // Look ahead to see if this starts an accidental pattern
+            if (_position + 1 < _text.Length)
+            {
+                char next = _text[_position + 1];
+                return IsNoteCharacter(next);
+            }
+            
+            return false;
+        }
+
+        private Token HandleInvertedOrnament()
+        {
+            var start = _position;
+            var startColumn = _column;
+            
+            _position++; // Skip the '~'
+            _column++;
+            
+            if (_position < _text.Length)
+            {
+                char next = _text[_position];
+                
+                // Check for inverted ornaments
+                if (next == 'M')
+                {
+                    _position++;
+                    _column++;
+                    return new Token(TokenType.InvertedMordent, "~M", start, _line, startColumn);
+                }
+                else if (next == 'S')
+                {
+                    _position++;
+                    _column++;
+                    return new Token(TokenType.InvertedTurn, "~S", start, _line, startColumn);
+                }
+            }
+            
+            // If not a recognized inverted ornament, treat as unknown
+            return new Token(TokenType.Unknown, "~", start, _line, startColumn);
         }
 
         private Token CreateToken(TokenType type, string value)

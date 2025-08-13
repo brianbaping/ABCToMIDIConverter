@@ -59,6 +59,11 @@
         Trill,              // T
         Turn,               // S
         Mordent,            // M
+        InvertedMordent,    // ~M
+        Fermata,            // H
+        Tenuto,             // =
+        Marcato,            // ^
+        InvertedTurn,       // ~S
 
         // Special
         NewLine,

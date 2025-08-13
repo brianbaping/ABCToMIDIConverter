@@ -292,6 +292,27 @@ namespace ABCToMIDIConverter.Core.Parsers
                         // For now, just skip bar lines - we could add bar line objects later
                         break;
 
+                    // Handle ornaments
+                    case TokenType.Trill:
+                    case TokenType.Turn:
+                    case TokenType.Mordent:
+                    case TokenType.InvertedMordent:
+                    case TokenType.InvertedTurn:
+                    case TokenType.Fermata:
+                    case TokenType.Staccato:
+                    case TokenType.Accent:
+                    case TokenType.Marcato:
+                        var ornament = ParseOrnament();
+                        if (ornament != null)
+                            tune.Elements.Add(ornament);
+                        break;
+
+                    case TokenType.GraceNoteStart:
+                        var graceNotes = ParseGraceNotes();
+                        if (graceNotes != null)
+                            tune.Elements.Add(graceNotes);
+                        break;
+
                     case TokenType.NewLine:
                     case TokenType.Comment:
                         // Skip these
@@ -483,6 +504,116 @@ namespace ABCToMIDIConverter.Core.Parsers
             {
                 _result.AddWarning($"Error parsing duration: {durationText}, using default 1.0");
                 return 1.0;
+            }
+        }
+
+        private Ornament? ParseOrnament()
+        {
+            var token = CurrentToken();
+
+            try
+            {
+                switch (token.Type)
+                {
+                    case TokenType.Trill:
+                        return new Trill();
+
+                    case TokenType.Turn:
+                        return new Turn();
+
+                    case TokenType.InvertedTurn:
+                        return new Turn { IsInverted = true };
+
+                    case TokenType.Mordent:
+                        return new Mordent();
+
+                    case TokenType.InvertedMordent:
+                        return new Mordent { IsInverted = true };
+
+                    case TokenType.Fermata:
+                        return new Articulation(OrnamentType.Fermata);
+
+                    case TokenType.Staccato:
+                        return new Articulation(OrnamentType.Staccato);
+
+                    case TokenType.Accent:
+                        return new Articulation(OrnamentType.Accent);
+
+                    case TokenType.Marcato:
+                        return new Articulation(OrnamentType.Marcato);
+
+                    default:
+                        _result.AddWarning($"Unrecognized ornament token: {token.Type}", token.Line, token.Column);
+                        return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                _result.AddError($"Error parsing ornament: {ex.Message}", token.Line, token.Column);
+                return null;
+            }
+        }
+
+        private GraceNotes? ParseGraceNotes()
+        {
+            var startToken = CurrentToken();
+            if (startToken.Type != TokenType.GraceNoteStart)
+                return null;
+
+            try
+            {
+                var graceNotes = new GraceNotes();
+                Advance(); // Skip the opening brace
+
+                // Parse notes within the grace note group
+                while (!IsAtEnd() && CurrentToken().Type != TokenType.GraceNoteEnd)
+                {
+                    var token = CurrentToken();
+
+                    switch (token.Type)
+                    {
+                        case TokenType.Note:
+                            var note = ParseNote();
+                            if (note != null)
+                            {
+                                // Grace notes are typically shorter
+                                note.Duration *= 0.25; // Make them 1/4 of normal duration
+                                graceNotes.Notes.Add(note);
+                            }
+                            break;
+
+                        case TokenType.Accidental:
+                            // Will be handled as part of note parsing
+                            break;
+
+                        case TokenType.Duration:
+                            // Will be handled as part of note parsing
+                            break;
+
+                        default:
+                            _result.AddWarning($"Unexpected token in grace notes: {token.Type}", token.Line, token.Column);
+                            break;
+                    }
+
+                    Advance();
+                }
+
+                // Check for closing brace
+                if (!IsAtEnd() && CurrentToken().Type == TokenType.GraceNoteEnd)
+                {
+                    // Don't advance here - let the main parser handle it
+                    return graceNotes;
+                }
+                else
+                {
+                    _result.AddError("Unclosed grace note group", startToken.Line, startToken.Column);
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                _result.AddError($"Error parsing grace notes: {ex.Message}", startToken.Line, startToken.Column);
+                return null;
             }
         }
 
