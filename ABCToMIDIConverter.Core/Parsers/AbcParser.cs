@@ -60,6 +60,12 @@ namespace ABCToMIDIConverter.Core.Parsers
                 _currentIndex = 0;
                 _result = new ParseResult();
 
+                // Validate that we start with proper ABC notation
+                if (_tokens.Count > 0 && _tokens[0].Type != TokenType.InformationField)
+                {
+                    _result.AddError("Invalid ABC file: Must start with an information field (e.g., X:1)");
+                }
+
                 // Parse with safety measures
                 var tune = ParseTune();
                 
@@ -68,33 +74,44 @@ namespace ABCToMIDIConverter.Core.Parsers
                 
                 _result.Tune = tune;
 
+                // If any errors occurred during parsing, mark as failed
+                if (_result.Errors.Count > 0)
+                {
+                    _result.Tune = null;
+                }
+
                 return _result;
             }
             catch (OperationCanceledException)
             {
                 var elapsed = (DateTime.UtcNow - _parseStartTime).TotalSeconds;
                 _result.AddError($"Parsing operation was cancelled/timed out after {elapsed:F1} seconds. The input may be too complex or contain problematic patterns.");
+                _result.Tune = null; // Ensure tune is null when there are errors
                 return _result;
             }
             catch (InvalidOperationException ex) when (ex.Message.Contains("Infinite loop") || 
                                                         (ex.Message.Contains("Too many") && !ex.Message.Contains("too large")))
             {
                 _result.AddError($"Parsing failed due to safety limit: {ex.Message}");
+                _result.Tune = null; // Ensure tune is null when there are errors
                 return _result;
             }
             catch (StackOverflowException)
             {
                 _result.AddError("Parsing failed due to stack overflow. The input may be too complex or contain recursive structures.");
+                _result.Tune = null; // Ensure tune is null when there are errors
                 return _result;
             }
             catch (OutOfMemoryException)
             {
                 _result.AddError("Parsing failed due to out of memory. The input file may be too large.");
+                _result.Tune = null; // Ensure tune is null when there are errors
                 return _result;
             }
             catch (Exception ex)
             {
                 _result.AddError($"Parsing failed: {ex.Message}");
+                _result.Tune = null; // Ensure tune is null when there are errors
                 return _result;
             }
         }
@@ -115,6 +132,7 @@ namespace ABCToMIDIConverter.Core.Parsers
         private void ParseHeader(AbcTune tune)
         {
             int iterations = 0;
+            bool hasValidStart = false;
             
             while (!IsAtEnd() && CurrentToken().Type == TokenType.InformationField)
             {
@@ -127,6 +145,13 @@ namespace ABCToMIDIConverter.Core.Parsers
 
                 var token = CurrentToken();
                 ParseInformationField(token, tune);
+                
+                // Check if we have a valid start (X: field)
+                if (token.Value.StartsWith("X:"))
+                {
+                    hasValidStart = true;
+                }
+                
                 Advance();
 
                 // Skip newlines with safety check
@@ -144,6 +169,12 @@ namespace ABCToMIDIConverter.Core.Parsers
                 // Break if we hit K: field (end of header)
                 if (token.Value.StartsWith("K:"))
                     break;
+            }
+
+            // Check for valid ABC file structure
+            if (!hasValidStart)
+            {
+                _result.AddError("Invalid ABC file: Missing required X: (reference number) field at the beginning");
             }
 
             // Set default unit note length if not specified
@@ -433,6 +464,10 @@ namespace ABCToMIDIConverter.Core.Parsers
 
                     case TokenType.EndOfFile:
                         return;
+
+                    case TokenType.Unknown:
+                        _result.AddError($"Unknown or invalid character: '{token.Value}'", token.Line, token.Column);
+                        break;
 
                     default:
                         _result.AddWarning($"Unhandled token in body: {token.Type} - {token.Value}", token.Line, token.Column);

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "BWlMwi4wv2l5uQGZTJD3CdnkIXiaGOFh+nfJ7cLlYVilhQxGi+J88x4Qe/m/Hcf3RDG2OuEvUAsxiLqDPmo9Xw==",
+  "dgSpecHash": "OPq/tS/h3YPW2Ow6w6kta+nRxvR3Ciuw8ZsqrSKINNbSd2jcVP0SHlT9cx6m0mY28avKb/L1sh5pTHCUyD0HEQ==",
   "success": true,
-  "projectFilePath": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Tests\\ABCToMIDIConverter.Tests.csproj",
+  "projectFilePath": "d:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Tests\\ABCToMIDIConverter.Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\brian\\.nuget\\packages\\coverlet.collector\\6.0.0\\coverlet.collector.6.0.0.nupkg.sha512",
     "C:\\Users\\brian\\.nuget\\packages\\microsoft.codecoverage\\17.8.0\\microsoft.codecoverage.17.8.0.nupkg.sha512",

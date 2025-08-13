@@ -1603,11 +1603,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Tests\\ABCToMIDIConverter.Tests.csproj",
+      "projectUniqueName": "d:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Tests\\ABCToMIDIConverter.Tests.csproj",
       "projectName": "ABCToMIDIConverter.Tests",
-      "projectPath": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Tests\\ABCToMIDIConverter.Tests.csproj",
+      "projectPath": "d:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Tests\\ABCToMIDIConverter.Tests.csproj",
       "packagesPath": "C:\\Users\\brian\\.nuget\\packages\\",
-      "outputPath": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Tests\\obj\\",
+      "outputPath": "d:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Tests\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -1628,8 +1628,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj": {
-              "projectPath": "D:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj"
+            "d:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj": {
+              "projectPath": "d:\\Brian\\Development\\ABCToMIDIConverter\\ABCToMIDIConverter.Core\\ABCToMIDIConverter.Core.csproj"
             }
           }
         }
